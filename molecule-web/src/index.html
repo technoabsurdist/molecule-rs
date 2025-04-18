@@ -358,6 +358,43 @@
         word-break: break-word;
       }
 
+      /* Markdown styling */
+      .message-content strong {
+        font-weight: 600;
+      }
+
+      .message-content em {
+        font-style: italic;
+      }
+
+      .message-content code {
+        font-family: monospace;
+        background-color: #f5f5f5;
+        padding: 2px 4px;
+        border-radius: 4px;
+        font-size: 0.9em;
+      }
+
+      .message-content pre {
+        background-color: #f5f5f5;
+        border-radius: 6px;
+        padding: 12px;
+        overflow-x: auto;
+        margin: 8px 0;
+      }
+
+      .message-content pre code {
+        background-color: transparent;
+        padding: 0;
+        border-radius: 0;
+        display: block;
+        font-size: 0.9em;
+      }
+
+      .message-content br {
+        margin-bottom: 8px;
+      }
+
       .chat-input-container {
         display: flex;
         position: relative;
@@ -611,7 +648,7 @@
         </div>
         <div class="sidebar sidebar-right">
           <div class="chat-container">
-            <h3>Protein Assistant</h3>
+            <h3>Protein AI Assistant</h3>
             <div class="chat-messages" id="chat-messages">
               <div class="message system-message">
                 <div class="message-content">
@@ -623,7 +660,7 @@
             <div class="chat-input-container">
               <textarea
                 id="chat-input"
-                placeholder="Ask about the protein structure..."
+                placeholder="Ask me anything..."
                 rows="3"
               ></textarea>
               <button id="send-message" class="send-message-button">
@@ -640,7 +677,7 @@
                 </svg>
               </button>
             </div>
-            <div class="chat-suggestions">
+            <!-- <div class="chat-suggestions">
               <p>Try asking:</p>
               <div class="suggestion-chips">
                 <button class="suggestion-chip">
@@ -653,7 +690,7 @@
                   What is this protein's function?
                 </button>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

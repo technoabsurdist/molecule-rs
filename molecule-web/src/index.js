@@ -416,6 +416,49 @@ function setupChatFunctionality() {
   const chatMessages = document.getElementById("chat-messages");
   const suggestionChips = document.querySelectorAll(".suggestion-chip");
 
+  // Function to parse and render simple Markdown in message content
+  function parseMarkdown(text) {
+    if (!text) return "";
+
+    // Sanitize HTML to prevent XSS attacks
+    text = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    // Replace code blocks with HTML <pre><code> tags (do this first to prevent formatting inside code)
+    text = text.replace(/```([\s\S]*?)```/g, function (match, code) {
+      // Don't process markdown inside code blocks
+      return "<pre><code>" + code.trim() + "</code></pre>";
+    });
+
+    // Replace inline code with HTML <code> tags
+    text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+    // Replace bold markdown (**text**) with HTML <strong> tags
+    text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+    // Replace italic markdown (*text*) with HTML <em> tags
+    // Negative lookahead to avoid matching inside already processed bold text
+    text = text.replace(/\*(?!\*)(.*?)(?<!\*)\*/g, "<em>$1</em>");
+
+    // Replace ordered lists
+    text = text.replace(/^\d+\.\s+(.+)$/gm, "<li>$1</li>");
+    text = text.replace(/(<li>.*<\/li>)/s, "<ol>$1</ol>");
+
+    // Replace unordered lists
+    text = text.replace(/^[\*\-]\s+(.+)$/gm, "<li>$1</li>");
+    text = text.replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>");
+
+    // Handle paragraphs and line breaks
+    text = text.replace(/\n\n/g, "</p><p>");
+    text = text.replace(/\n/g, "<br>");
+
+    // Wrap with paragraph if not already wrapped
+    if (!text.startsWith("<p>")) {
+      text = "<p>" + text + "</p>";
+    }
+
+    return text;
+  }
+
   // Function to add a message to the chat
   function addMessage(text, type) {
     const messageDiv = document.createElement("div");
@@ -423,7 +466,9 @@ function setupChatFunctionality() {
 
     const messageContent = document.createElement("div");
     messageContent.className = "message-content";
-    messageContent.textContent = text;
+
+    // Use innerHTML with parsed markdown instead of textContent
+    messageContent.innerHTML = parseMarkdown(text);
 
     messageDiv.appendChild(messageContent);
     chatMessages.appendChild(messageDiv);
@@ -521,7 +566,7 @@ function setupChatFunctionality() {
   });
 }
 
-// Add this as a global function to be used elsewhere
+// Update the global addMessage function too
 window.addMessage = function (text, type) {
   const chatMessages = document.getElementById("chat-messages");
 
@@ -530,7 +575,9 @@ window.addMessage = function (text, type) {
 
   const messageContent = document.createElement("div");
   messageContent.className = "message-content";
-  messageContent.textContent = text;
+
+  // Use innerHTML with parsed markdown instead of textContent
+  messageContent.innerHTML = parseMarkdown(text);
 
   messageDiv.appendChild(messageContent);
   chatMessages.appendChild(messageDiv);
