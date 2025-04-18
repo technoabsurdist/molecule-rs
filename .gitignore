@@ -1,0 +1,57 @@
+/target
+/node_modules
+Cargo.lock
+.env
+*/Cargo.lock
+
+# Rust build artifacts
+**/target/
+**/*.rs.bk
+**/Cargo.lock
+# Only ignore Cargo.lock in the root, keep it for the crates
+!/Cargo.lock
+
+# WASM specific files
+**/*.wasm
+**/*.wasm.map
+**/pkg/
+**/wasm-pack.log
+**/wasm-bindgen-*/
+
+# Editor and IDE files
+**/.idea/
+**/.vscode/
+**/.vs/
+**/*.swp
+**/*.swo
+**/.DS_Store
+
+# Generated documentation
+**/doc/
+**/docs/target/
+
+# Debug artifacts
+**/*.profraw
+**/flamegraph.svg
+**/perf.data
+**/perf.data.old
+
+# Frontend build artifacts
+**/node_modules/
+**/dist/
+**/build/
+**/.cache/
+**/.parcel-cache/
+**/yarn-error.log
+**/npm-debug.log
+
+# Environment files
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+
+# Backup files
+**/*~
+**/*.bak

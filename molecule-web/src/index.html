@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Molecule-rs 3D Viewer</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      header {
+        background-color: #1a1a1a;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+      .main {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+      .sidebar {
+        width: 300px;
+        background-color: #f5f5f5;
+        padding: 20px;
+        overflow-y: auto;
+        border-right: 1px solid #ddd;
+      }
+      .viewer-container {
+        flex: 1;
+        position: relative;
+      }
+      #viewer {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+      }
+      .controls {
+        margin-bottom: 20px;
+      }
+      .controls label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      select,
+      button {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 18px;
+        color: #666;
+      }
+      .example-selector {
+        margin-bottom: 20px;
+      }
+      textarea {
+        width: 100%;
+        height: 150px;
+        margin-bottom: 10px;
+        font-family: monospace;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>molecule-rs demo</h1>
+        <div>Powered by Rust + WASM + 3Dmol.js</div>
+      </header>
+      <div class="main">
+        <div class="sidebar">
+          <div class="controls">
+            <div class="example-selector">
+              <label for="example-pdb">Example PDB:</label>
+              <select id="example-pdb">
+                <option value="">Select an example...</option>
+                <option value="1CRN">1CRN - Crambin</option>
+                <option value="1AQ1">1AQ1 - Ribonuclease A</option>
+                <option value="4HHB">4HHB - Hemoglobin</option>
+              </select>
+            </div>
+
+            <label for="pdb-input">PDB Data:</label>
+            <textarea
+              id="pdb-input"
+              placeholder="Paste PDB data here..."
+            ></textarea>
+            <button id="load-pdb">Load PDB</button>
+          </div>
+
+          <div class="styling-controls">
+            <h3>Display Options</h3>
+            <label for="style-select">Rendering Style:</label>
+            <select id="style-select">
+              <option value="stick">Stick</option>
+              <option value="line">Line</option>
+              <option value="cross">Cross</option>
+              <option value="sphere">Sphere</option>
+              <option value="cartoon">Cartoon</option>
+            </select>
+
+            <h3>Color Options</h3>
+            <select id="color-scheme">
+              <option value="element">By Element</option>
+              <option value="residue">By Residue</option>
+              <option value="chain">By Chain</option>
+              <option value="secondary">By Secondary Structure</option>
+            </select>
+
+            <button id="apply-style">Apply Style</button>
+          </div>
+        </div>
+        <div class="viewer-container">
+          <div id="viewer"></div>
+          <div class="loading" id="loading-indicator">Loading...</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

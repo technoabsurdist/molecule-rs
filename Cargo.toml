@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "molecule-core",
+    "molecule-wasm",
+]
