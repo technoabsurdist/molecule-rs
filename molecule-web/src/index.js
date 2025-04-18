@@ -24,34 +24,164 @@ async function initializeApp() {
   }
 }
 
+async function searchPdbStructures(query) {
+  // PDB API endpoint for text search
+  const url = "https://search.rcsb.org/rcsbsearch/v2/query";
+
+  // Create a search query for PDB entries with titles or description containing the query
+  const searchPayload = {
+    query: {
+      type: "group",
+      logical_operator: "or",
+      nodes: [
+        {
+          type: "terminal",
+          service: "text",
+          parameters: {
+            attribute: "struct.title",
+            operator: "contains_words",
+            value: query,
+          },
+        },
+        {
+          type: "terminal",
+          service: "text",
+          parameters: {
+            attribute:
+              "rcsb_entry_info.deposited_polymer_entity_instance_count",
+            operator: "greater",
+            value: 0,
+          },
+        },
+      ],
+    },
+    return_type: "entry",
+    request_options: {
+      paginate: {
+        start: 0,
+        rows: 10,
+      },
+    },
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(searchPayload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.result_set || [];
+  } catch (error) {
+    console.error("Error searching PDB:", error);
+    return [];
+  }
+}
+
+async function getStructureInfo(pdbId) {
+  try {
+    // Use the PDB Data API to get structure details
+    const response = await fetch(
+      `https://data.rcsb.org/rest/v1/core/entry/${pdbId}`
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch structure info: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching info for ${pdbId}:`, error);
+    return null;
+  }
+}
+
 function setupEventListeners() {
+  // Set up search bar and results
+  const searchInput = document.getElementById("search-input");
+  const searchButton = document.getElementById("search-button");
+  const searchResults = document.getElementById("search-results");
+
+  let searchTimeout;
+
+  searchInput.addEventListener("input", (e) => {
+    clearTimeout(searchTimeout);
+    const query = e.target.value.trim();
+
+    if (query.length < 3) {
+      searchResults.innerHTML = "";
+      return;
+    }
+
+    searchTimeout = setTimeout(async () => {
+      searchResults.innerHTML = "<div class='searching'>Searching...</div>";
+      // Make search results visible
+      searchResults.style.display = "block";
+      const results = await searchPdbStructures(query);
+
+      if (results.length === 0) {
+        searchResults.innerHTML =
+          "<div class='no-results'>No structures found</div>";
+        return;
+      }
+
+      // Clear previous results and display new ones
+      searchResults.innerHTML = "";
+
+      // Process results to get more information about each entry
+      const resultPromises = results.map(async (result) => {
+        const pdbId = result.identifier;
+        const info = await getStructureInfo(pdbId);
+
+        const title = info?.struct?.title || "Unknown structure";
+
+        const resultItem = document.createElement("div");
+        resultItem.className = "search-result-item";
+        resultItem.innerHTML = `
+          <strong>${pdbId}</strong> - ${title}
+        `;
+
+        resultItem.addEventListener("click", async () => {
+          searchInput.value = `${pdbId} - ${title}`;
+          searchResults.innerHTML = "";
+          searchResults.style.display = "none";
+          await loadPdbById(pdbId);
+        });
+
+        return resultItem;
+      });
+
+      const resultElements = await Promise.all(resultPromises);
+      resultElements.forEach((element) => searchResults.appendChild(element));
+    }, 500);
+  });
+
+  searchButton.addEventListener("click", async () => {
+    const query = searchInput.value.trim();
+    if (!query) return;
+
+    // Hide search results
+    searchResults.style.display = "none";
+
+    // Check if this is a PDB ID format (4 characters, typically alphanumeric)
+    const pdbIdMatch = query.match(/^(\w{4})/);
+    if (pdbIdMatch) {
+      await loadPdbById(pdbIdMatch[1]);
+    }
+  });
+
   document
     .getElementById("example-pdb")
     .addEventListener("change", async (e) => {
       const pdbId = e.target.value;
       if (!pdbId) return;
 
-      try {
-        document.getElementById("loading-indicator").style.display = "block";
-        document.getElementById(
-          "loading-indicator"
-        ).textContent = `Loading ${pdbId}...`;
-
-        const response = await fetch(
-          `https://files.rcsb.org/download/${pdbId}.pdb`
-        );
-        if (!response.ok) {
-          throw new Error(`Failed to fetch PDB: ${response.statusText}`);
-        }
-
-        const pdbData = await response.text();
-        document.getElementById("pdb-input").value = pdbData;
-        await loadPdbData(pdbData);
-      } catch (error) {
-        console.error("Error loading example PDB:", error);
-        document.getElementById("loading-indicator").textContent =
-          "Error: " + error.message;
-      }
+      await loadPdbById(pdbId);
     });
 
   // Load PDB button
@@ -74,6 +204,31 @@ function setupEventListeners() {
 
     applyStyle();
   });
+}
+
+async function loadPdbById(pdbId) {
+  try {
+    document.getElementById("loading-indicator").style.display = "block";
+    document.getElementById(
+      "loading-indicator"
+    ).textContent = `Loading ${pdbId}...`;
+
+    const response = await fetch(
+      `https://files.rcsb.org/download/${pdbId}.pdb`
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch PDB: ${response.statusText}`);
+    }
+
+    const pdbData = await response.text();
+    document.getElementById("pdb-input").value = pdbData;
+    await loadPdbData(pdbData);
+  } catch (error) {
+    console.error("Error loading PDB:", error);
+    document.getElementById("loading-indicator").textContent =
+      "Error: " + error.message;
+    document.getElementById("loading-indicator").style.display = "none";
+  }
 }
 
 async function loadPdbData(pdbData) {

@@ -60,7 +60,8 @@
         font-weight: bold;
       }
       select,
-      button {
+      button,
+      input {
         width: 100%;
         padding: 8px;
         margin-bottom: 10px;
@@ -97,6 +98,28 @@
         border-radius: 4px;
         border: 1px solid #ccc;
       }
+      .search-container {
+        margin-bottom: 20px;
+      }
+      .search-results {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        display: none;
+      }
+      .search-result-item {
+        padding: 8px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+      }
+      .search-result-item:hover {
+        background-color: #f0f0f0;
+      }
+      .search-result-item:last-child {
+        border-bottom: none;
+      }
     </style>
   </head>
   <body>
@@ -108,6 +131,17 @@
       <div class="main">
         <div class="sidebar">
           <div class="controls">
+            <div class="search-container">
+              <label for="search-input">Search PDB:</label>
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Search for structures (e.g., Hemoglobin)..."
+              />
+              <button id="search-button">Search</button>
+              <div id="search-results" class="search-results"></div>
+            </div>
+
             <div class="example-selector">
               <label for="example-pdb">Example PDB:</label>
               <select id="example-pdb">
