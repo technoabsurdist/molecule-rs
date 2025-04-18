@@ -1,37 +1,29 @@
-# molecule-web
+# Molecule Web Viewer with AI Protein Assistant
 
-A web demonstration of the molecule-rs library with WebAssembly and 3Dmol.js integration.
-
-## Overview
-
-This is a simple web application that demonstrates the integration of:
-
-1. molecule-rs - Rust-based molecular data processing library
-2. WebAssembly - For high-performance processing in the browser
-3. 3Dmol.js - For molecular visualization
+This web application allows you to visualize and interact with 3D protein structures. It features an AI-powered chat assistant that can answer questions about the protein you're viewing.
 
 ## Features
 
-- Load PDB files directly from text or fetch from RCSB
-- Interactive 3D visualization with multiple rendering styles
-- Color molecules by various properties (element, residue, chain, etc.)
-- Powered by fast Rust code running in WebAssembly
+- 3D visualization of protein structures with multiple rendering styles
+- Color-coded chains for better visualization of protein subunits
+- Search and load proteins directly from the PDB database
+- Drag-and-drop support for local PDB files
+- AI assistant that can answer questions about the protein structure
 
-## Getting Started
+## Setup
 
 ### Prerequisites
 
-- Node.js (v14 or newer)
-- npm or yarn
-- wasm-pack (for building the WebAssembly module)
+- Node.js (v14 or higher)
+- npm (v6 or higher)
+- OpenAI API key
 
 ### Installation
 
-1. Make sure the WASM module is built first:
+1. Create a `.env` file in the `molecule-web` directory with your OpenAI API key:
 
-```bash
-cd ../molecule-wasm
-wasm-pack build
+```
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 2. Install dependencies:
@@ -46,29 +38,42 @@ npm install
 npm start
 ```
 
-4. Open your browser and navigate to `http://localhost:8080`
+4. Open your browser to [http://localhost:8080](http://localhost:8080)
 
-### Building for Production
+## Using the Protein AI Assistant
 
-```bash
-npm run build
-```
+The AI assistant can answer a wide range of questions about the protein structure you're viewing, such as:
 
-This will create a `dist` directory with the production build.
+- "What are the secondary structures in this protein?"
+- "How many chains does this protein have?"
+- "What is the function of this protein?"
+- "Explain the significance of the beta sheets in this structure"
+- "Which amino acids are commonly found at the binding site?"
 
-## Usage
+Load a protein structure first, then ask questions in the chat panel on the right side of the screen.
 
-1. Select an example PDB from the dropdown or paste your own PDB data
-2. Click "Load PDB" to visualize the molecule
-3. Use the style controls to change the visualization
-4. Click "Apply Style" to update the rendering
+## Privacy and API Usage
+
+- The application uses your OpenAI API key to generate responses about protein structures
+- API calls are made directly from your browser to OpenAI's servers
+- Be mindful of API usage costs - each question generates an API call
+
+## Development
+
+The application is built with:
+
+- Rust and WebAssembly for molecular structure parsing
+- 3Dmol.js for 3D visualization
+- OpenAI API for the protein assistant chat functionality
 
 ## Technology Stack
 
-- Rust - Core molecular processing logic
-- WebAssembly - Performance-critical calculations in the browser
-- 3Dmol.js - Molecular visualization
-- webpack - Bundling and development server
+- **Rust**: Core molecular structure processing
+- **WebAssembly**: Browser integration for Rust code
+- **JavaScript/HTML/CSS**: Web interface
+- **3Dmol.js**: 3D molecular visualization
+- **OpenAI API**: Powers the AI protein assistant
+- **webpack**: Bundling and development server
 
 ## License
 

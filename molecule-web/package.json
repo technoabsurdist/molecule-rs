@@ -8,7 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "3dmol": "^2.0.3"
+    "3dmol": "^2.0.3",
+    "dotenv": "^16.5.0",
+    "openai": "^4.95.1"
   },
   "devDependencies": {
     "@wasm-tool/wasm-pack-plugin": "^1.7.0",

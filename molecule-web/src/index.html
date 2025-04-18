@@ -175,6 +175,30 @@
         padding: 16px;
         border: 1px solid #e0e0e0;
       }
+      .send-message-button {
+        position: absolute;
+        right: 10px;
+        bottom: 15px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+        transition: all 0.2s ease;
+      }
+
+      .send-message-button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+      }
+
       .styling-controls h3 {
         margin-top: 0;
         border-bottom-color: #d0e0d0;
@@ -275,6 +299,206 @@
         to {
           transform: rotate(360deg);
         }
+      }
+
+      /* Chat Styles */
+      .sidebar-right {
+        width: 320px;
+        background-color: #f8f8f8;
+        border-left: 1px solid #e0e0e0;
+        border-right: none;
+      }
+
+      .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 0 0 10px 0;
+      }
+
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .message {
+        display: flex;
+        margin: 8px 0;
+        max-width: 90%;
+        padding: 12px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .user-message {
+        margin-left: auto;
+        background-color: #e3f2fd;
+        border-bottom-right-radius: 4px;
+      }
+
+      .assistant-message {
+        margin-right: auto;
+        background-color: #f1f1f1;
+        border-bottom-left-radius: 4px;
+      }
+
+      .system-message {
+        margin: 0 auto;
+        background-color: #f0f8f0;
+        border-radius: 8px;
+      }
+
+      .message-content {
+        word-break: break-word;
+      }
+
+      .chat-input-container {
+        display: flex;
+        position: relative;
+        border-top: 1px solid #e0e0e0;
+        padding: 15px 0 10px 0;
+        margin: 0;
+      }
+
+      #chat-input {
+        resize: none;
+        width: 100%;
+        padding: 12px 50px 12px 12px;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+        font-size: 14px;
+        box-sizing: border-box;
+        outline: none;
+        transition: border-color 0.2s;
+        margin: 0;
+      }
+
+      #chat-input:focus {
+        border-color: #4caf50;
+      }
+
+      #send-message,
+      .send-message-button {
+        position: absolute;
+        right: 10px;
+        bottom: 15px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+        transition: all 0.2s ease;
+      }
+
+      #send-message:hover,
+      .send-message-button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+      }
+
+      .chat-suggestions {
+        margin-top: 10px;
+      }
+
+      .chat-suggestions p {
+        font-size: 13px;
+        margin: 0 0 8px 0;
+        color: #666;
+      }
+
+      .suggestion-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .suggestion-chip {
+        background-color: #e8f5e9;
+        border: 1px solid #c8e6c9;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 13px;
+        cursor: pointer;
+        color: #2e7d32;
+        margin: 0;
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .suggestion-chip:hover {
+        background-color: #c8e6c9;
+        box-shadow: none;
+      }
+
+      /* Typing indicator animation */
+      .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .typing-indicator span {
+        width: 8px;
+        height: 8px;
+        background-color: #aaa;
+        border-radius: 50%;
+        display: inline-block;
+        animation: typing-animation 1.4s infinite ease-in-out both;
+      }
+
+      .typing-indicator span:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing-animation {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.6);
+          opacity: 0.4;
+        }
+        40% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Styles for syntax highlighting in code blocks */
+      .message pre {
+        background-color: #f5f5f5;
+        border-radius: 6px;
+        padding: 12px;
+        overflow-x: auto;
+        font-family: monospace;
+        margin: 8px 0;
+      }
+
+      .message code {
+        font-family: monospace;
+        background-color: #f5f5f5;
+        padding: 2px 4px;
+        border-radius: 4px;
       }
     </style>
   </head>
@@ -377,20 +601,60 @@
               <option value="cartoon">Cartoon</option>
             </select>
 
-            <label for="color-scheme">Color Scheme:</label>
-            <select id="color-scheme">
-              <option value="element">By Element</option>
-              <option value="residue">By Residue</option>
-              <option value="chain">By Chain</option>
-              <option value="secondary">By Secondary Structure</option>
-            </select>
-
+            <input type="hidden" id="color-scheme" value="chain" />
             <button id="apply-style">Apply Style</button>
           </div>
         </div>
         <div class="viewer-container">
           <div id="viewer"></div>
           <div class="loading" id="loading-indicator">Loading...</div>
+        </div>
+        <div class="sidebar sidebar-right">
+          <div class="chat-container">
+            <h3>Protein Assistant</h3>
+            <div class="chat-messages" id="chat-messages">
+              <div class="message system-message">
+                <div class="message-content">
+                  Welcome! I can answer questions about the protein structure
+                  you're viewing. What would you like to know?
+                </div>
+              </div>
+            </div>
+            <div class="chat-input-container">
+              <textarea
+                id="chat-input"
+                placeholder="Ask about the protein structure..."
+                rows="3"
+              ></textarea>
+              <button id="send-message" class="send-message-button">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </div>
+            <div class="chat-suggestions">
+              <p>Try asking:</p>
+              <div class="suggestion-chips">
+                <button class="suggestion-chip">
+                  What are the secondary structures?
+                </button>
+                <button class="suggestion-chip">
+                  How many chains are there?
+                </button>
+                <button class="suggestion-chip">
+                  What is this protein's function?
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
