@@ -289,22 +289,22 @@ function applyStyle(styleType = null, colorScheme = null) {
   // Apply style
   switch (styleType) {
     case "stick":
-      viewer.setStyle({}, { stick: { radius: 0.15, color: colorObj } });
+      viewer.setStyle({}, { stick: { radius: 0.15, colorscheme: colorObj } });
       break;
     case "line":
-      viewer.setStyle({}, { line: { color: colorObj } });
+      viewer.setStyle({}, { line: { colorscheme: colorObj } });
       break;
     case "cross":
       viewer.setStyle({}, { cross: { lineWidth: 2, colorscheme: colorObj } });
       break;
     case "sphere":
-      viewer.setStyle({}, { sphere: { radius: 0.8, color: colorObj } });
+      viewer.setStyle({}, { sphere: { radius: 0.8, colorscheme: colorObj } });
       break;
     case "cartoon":
-      viewer.setStyle({}, { cartoon: { color: colorObj } });
+      viewer.setStyle({}, { cartoon: { colorscheme: colorObj } });
       break;
     default:
-      viewer.setStyle({}, { stick: { radius: 0.15, color: colorObj } });
+      viewer.setStyle({}, { stick: { radius: 0.15, colorscheme: colorObj } });
   }
 
   // Update the view
