@@ -104,7 +104,6 @@ async function getStructureInfo(pdbId) {
 function setupEventListeners() {
   // Set up search bar and results
   const searchInput = document.getElementById("search-input");
-  const searchButton = document.getElementById("search-button");
   const searchResults = document.getElementById("search-results");
 
   let searchTimeout;
@@ -115,6 +114,7 @@ function setupEventListeners() {
 
     if (query.length < 3) {
       searchResults.innerHTML = "";
+      searchResults.style.display = "none";
       return;
     }
 
@@ -161,34 +161,18 @@ function setupEventListeners() {
     }, 500);
   });
 
-  searchButton.addEventListener("click", async () => {
-    const query = searchInput.value.trim();
-    if (!query) return;
-
-    // Hide search results
-    searchResults.style.display = "none";
-
-    // Check if this is a PDB ID format (4 characters, typically alphanumeric)
-    const pdbIdMatch = query.match(/^(\w{4})/);
-    if (pdbIdMatch) {
-      await loadPdbById(pdbIdMatch[1]);
+  // Close search results when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!searchResults.contains(e.target) && e.target !== searchInput) {
+      searchResults.style.display = "none";
     }
   });
-
-  document
-    .getElementById("example-pdb")
-    .addEventListener("change", async (e) => {
-      const pdbId = e.target.value;
-      if (!pdbId) return;
-
-      await loadPdbById(pdbId);
-    });
 
   // Load PDB button
   document.getElementById("load-pdb").addEventListener("click", async () => {
     const pdbData = document.getElementById("pdb-input").value.trim();
     if (!pdbData) {
-      alert("Please enter PDB data or select an example");
+      alert("Please enter PDB data or use the search");
       return;
     }
 
@@ -222,12 +206,15 @@ async function loadPdbById(pdbId) {
 
     const pdbData = await response.text();
     document.getElementById("pdb-input").value = pdbData;
+
     await loadPdbData(pdbData);
   } catch (error) {
     console.error("Error loading PDB:", error);
     document.getElementById("loading-indicator").textContent =
       "Error: " + error.message;
-    document.getElementById("loading-indicator").style.display = "none";
+    setTimeout(() => {
+      document.getElementById("loading-indicator").style.display = "none";
+    }, 3000);
   }
 }
 
@@ -235,7 +222,7 @@ async function loadPdbData(pdbData) {
   try {
     document.getElementById("loading-indicator").style.display = "block";
     document.getElementById("loading-indicator").textContent =
-      "Processing data...";
+      "Processing molecule...";
 
     // Use our Rust WASM module to process the PDB data and get a formatted PDB string
     const pdbString = prepare_for_3dmol(pdbData);
@@ -266,6 +253,9 @@ async function loadPdbData(pdbData) {
     console.error("Error loading PDB data:", error);
     document.getElementById("loading-indicator").textContent =
       "Error: " + error.message;
+    setTimeout(() => {
+      document.getElementById("loading-indicator").style.display = "none";
+    }, 3000);
   }
 }
 
