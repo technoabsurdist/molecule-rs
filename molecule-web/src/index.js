@@ -1,6 +1,10 @@
 import * as $3Dmol from "3dmol";
 import { init, prepare_for_3dmol } from "../pkg/index";
-import { generateProteinResponse, fetchProteinInfo } from "./api";
+import {
+  generateProteinResponse,
+  fetchProteinInfo,
+  fetchProteinSequence,
+} from "./api";
 
 // Initialize the viewer and protein data store
 let viewer = null;
@@ -10,6 +14,7 @@ let currentProteinData = {
   title: null,
   molecule: null,
   info: null,
+  sequence: null,
 };
 
 // Store chat history for context
@@ -116,6 +121,22 @@ function setupEventListeners() {
   const searchInput = document.getElementById("search-input");
   const searchResults = document.getElementById("search-results");
 
+  // Add a sequence display section to the sidebar
+  const sidebar = document.querySelector(".sidebar");
+  const sequenceSection = document.createElement("div");
+  sequenceSection.className = "sequence-container";
+  sequenceSection.innerHTML = `
+    <div class="section-divider"></div>
+    <h3>Protein Sequence</h3>
+    <div id="sequence-display" class="sequence-display">
+      <p class="no-sequence">No protein loaded. Use the search above to find a protein.</p>
+    </div>
+  `;
+
+  // Insert the sequence section after the styling controls
+  const stylingControls = document.querySelector(".styling-controls");
+  sidebar.insertBefore(sequenceSection, stylingControls.nextSibling);
+
   let searchTimeout;
 
   searchInput.addEventListener("input", (e) => {
@@ -213,6 +234,9 @@ async function loadPdbById(pdbId) {
     // Fetch protein info for the knowledge base
     const proteinInfo = await fetchProteinInfo(pdbId);
 
+    // Fetch protein sequence data
+    const sequenceData = await fetchProteinSequence(pdbId);
+
     const response = await fetch(
       `https://files.rcsb.org/download/${pdbId}.pdb`
     );
@@ -227,6 +251,10 @@ async function loadPdbById(pdbId) {
     currentProteinData.pdbId = pdbId;
     currentProteinData.title = proteinInfo?.struct?.title || `Protein ${pdbId}`;
     currentProteinData.info = proteinInfo;
+    currentProteinData.sequence = sequenceData;
+
+    // Update sequence display in the sidebar
+    updateSequenceDisplay(sequenceData);
 
     await loadPdbData(pdbData);
 
@@ -595,6 +623,53 @@ window.addMessage = function (text, type) {
   // Scroll to the bottom of the chat
   chatMessages.scrollTop = chatMessages.scrollHeight;
 };
+
+// Function to update the sequence display in the sidebar
+function updateSequenceDisplay(sequenceData) {
+  const sequenceDisplay = document.getElementById("sequence-display");
+
+  if (!sequenceData || !sequenceData.sequence) {
+    sequenceDisplay.innerHTML =
+      '<p class="no-sequence">No sequence data available for this protein.</p>';
+    return;
+  }
+
+  const sequence = sequenceData.sequence;
+  const type = sequenceData.type || "Unknown type";
+  const description = Array.isArray(sequenceData.description)
+    ? sequenceData.description.join(", ")
+    : sequenceData.description || "Unknown";
+  const entityId = sequenceData.entityId || 1;
+
+  // Format the sequence with line numbers and wrap at 50 characters
+  let formattedSequence = "";
+  let lineNumber = 1;
+
+  for (let i = 0; i < sequence.length; i += 50) {
+    const chunk = sequence.substring(i, i + 50);
+    formattedSequence += `<div class="sequence-line">
+      <span class="line-number">${lineNumber}</span>
+      <span class="sequence-text">${chunk}</span>
+      <span class="line-number">${Math.min(
+        lineNumber + 49,
+        sequence.length
+      )}</span>
+    </div>`;
+    lineNumber += 50;
+  }
+
+  sequenceDisplay.innerHTML = `
+    <div class="sequence-info">
+      <div><strong>Entity ID:</strong> ${entityId}</div>
+      <div><strong>Type:</strong> ${type}</div>
+      <div><strong>Chain(s):</strong> ${description}</div>
+      <div><strong>Length:</strong> ${sequence.length} residues</div>
+    </div>
+    <div class="sequence-content">
+      ${formattedSequence}
+    </div>
+  `;
+}
 
 // Initialize the app when the page loads
 window.addEventListener("load", initializeApp);

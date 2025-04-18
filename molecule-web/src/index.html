@@ -307,6 +307,7 @@
         background-color: #f8f8f8;
         border-left: 1px solid #e0e0e0;
         border-right: none;
+        overflow-x: hidden;
       }
 
       .chat-container {
@@ -314,26 +315,32 @@
         flex-direction: column;
         height: 100%;
         padding: 0 0 10px 0;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .chat-messages {
         flex: 1;
         overflow-y: auto;
-        padding: 10px 0;
+        overflow-x: hidden;
+        padding: 10px;
         display: flex;
         flex-direction: column;
         gap: 12px;
         margin-bottom: 10px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .message {
         display: flex;
         margin: 8px 0;
-        max-width: 90%;
+        max-width: 95%;
         padding: 12px;
         border-radius: 12px;
         font-size: 14px;
         line-height: 1.4;
+        box-sizing: border-box;
       }
 
       .user-message {
@@ -356,6 +363,10 @@
 
       .message-content {
         word-break: break-word;
+        overflow-wrap: break-word;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
       }
 
       /* Markdown styling */
@@ -373,6 +384,8 @@
         padding: 2px 4px;
         border-radius: 4px;
         font-size: 0.9em;
+        white-space: pre-wrap;
+        word-break: break-word;
       }
 
       .message-content pre {
@@ -381,6 +394,7 @@
         padding: 12px;
         overflow-x: auto;
         margin: 8px 0;
+        max-width: 100%;
       }
 
       .message-content pre code {
@@ -389,10 +403,56 @@
         border-radius: 0;
         display: block;
         font-size: 0.9em;
+        white-space: pre-wrap;
+        word-break: break-word;
       }
 
       .message-content br {
         margin-bottom: 8px;
+      }
+
+      /* Handle tables in message content */
+      .message-content table {
+        width: 100%;
+        max-width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+        font-size: 0.9em;
+      }
+
+      .message-content th,
+      .message-content td {
+        padding: 6px;
+        border: 1px solid #ddd;
+        text-align: left;
+        word-break: break-word;
+      }
+
+      .message-content th {
+        background-color: #f2f2f2;
+        font-weight: 600;
+      }
+
+      /* Make sure images don't overflow */
+      .message-content img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Sequence display in messages */
+      .message-content .protein-sequence {
+        font-family: monospace;
+        word-break: break-all;
+        white-space: pre-wrap;
+        font-size: 0.9em;
+        line-height: 1.5;
+        padding: 8px;
+        background-color: #f8f8f8;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        margin: 8px 0;
+        max-width: 100%;
+        overflow-x: auto;
       }
 
       .chat-input-container {
@@ -536,6 +596,60 @@
         background-color: #f5f5f5;
         padding: 2px 4px;
         border-radius: 4px;
+      }
+
+      /* Protein Sequence Styles */
+      .sequence-container {
+        margin-bottom: 24px;
+      }
+
+      .sequence-display {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+        font-family: monospace;
+      }
+
+      .no-sequence {
+        color: #666;
+        font-style: italic;
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      .sequence-info {
+        margin-bottom: 12px;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .sequence-content {
+        font-size: 14px;
+        letter-spacing: 0.5px;
+      }
+
+      .sequence-line {
+        display: flex;
+        margin-bottom: 4px;
+        align-items: center;
+      }
+
+      .line-number {
+        color: #999;
+        font-size: 12px;
+        width: 40px;
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      .sequence-text {
+        flex: 1;
+        padding: 0 8px;
+        word-break: break-all;
+        letter-spacing: 2px;
       }
     </style>
   </head>

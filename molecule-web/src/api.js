@@ -1,40 +1,24 @@
 import OpenAI from "openai";
 
-// Load the API key from environment variables
-// Note: In a production environment, you'd want to use proper environment variable handling
-// For development, we're accessing it from the .env file
 let apiKey = "";
 
-// Try to get the API key from the environment
 try {
   apiKey = process.env.OPENAI_API_KEY;
 } catch (error) {
   console.error("Error accessing OpenAI API key:", error);
 }
 
-// Initialize the OpenAI client
 const openai = new OpenAI({
   apiKey: apiKey,
-  dangerouslyAllowBrowser: true, // Only for client-side use in development
+  dangerouslyAllowBrowser: true,
 });
 
-/**
- * Generate a response about a protein structure using the OpenAI API
- * @param {string} userQuery - The user's question about the protein
- * @param {Object} proteinData - Data about the current protein structure
- * @param {string} proteinData.pdbId - The PDB ID of the protein
- * @param {string} proteinData.title - The title/name of the protein
- * @param {Object} proteinData.molecule - The molecule object from 3Dmol.js
- * @param {Array} chatHistory - Previous messages in the conversation
- * @returns {Promise<string>} - The AI-generated response
- */
 export async function generateProteinResponse(
   userQuery,
   proteinData,
   chatHistory = []
 ) {
   try {
-    // Create the messages array for the API call
     const messages = [
       {
         role: "developer",
@@ -62,13 +46,45 @@ The user is viewing a protein structure in a 3D molecular viewer. The visualizat
       },
     ];
 
-    // Add protein-specific information if available
     if (proteinData && proteinData.pdbId) {
       messages[0].content += `\n\nCurrent protein information:
 - PDB ID: ${proteinData.pdbId}
 - Title: ${proteinData.title || "Not available"}`;
 
-      // Try to extract chain information if available
+      // Add sequence information if available
+      if (proteinData.sequence && proteinData.sequence.sequence) {
+        const sequence = proteinData.sequence.sequence;
+        const sequenceType = proteinData.sequence.type || "Not specified";
+        const sequenceLength = sequence.length;
+
+        messages[0].content += `\n- Sequence Type: ${sequenceType}
+- Sequence Length: ${sequenceLength} residues`;
+
+        // Add sequence information - either full or truncated based on length
+        if (sequenceLength > 0) {
+          // For longer sequences, include start and end portions (to avoid context window overflow)
+          if (sequenceLength > 500) {
+            const startSequence = sequence.substring(0, 200);
+            const endSequence = sequence.substring(sequenceLength - 200);
+
+            messages[0].content += `\n- Sequence (start, 200 residues): ${startSequence}
+- Sequence (end, 200 residues): ${endSequence}
+- Note: Full sequence is available in the UI (${sequenceLength} residues total)`;
+          } else {
+            // For shorter sequences, include the entire sequence
+            messages[0].content += `\n- Full Sequence: ${sequence}`;
+          }
+
+          // Include chain information
+          const chains = proteinData.sequence.description;
+          if (chains) {
+            messages[0].content += `\n- Associated Chain(s): ${
+              Array.isArray(chains) ? chains.join(", ") : chains
+            }`;
+          }
+        }
+      }
+
       if (proteinData.molecule) {
         try {
           const atoms = proteinData.molecule.selectedAtoms({});
@@ -86,12 +102,11 @@ The user is viewing a protein structure in a 3D molecular viewer. The visualizat
             )}`;
           }
 
-          // Include a sample of residues (limit to avoid context size issues)
-          const residueList = Array.from(residues).slice(0, 10);
+          const residueList = Array.from(residues).slice(0, 50);
           if (residueList.length > 0) {
             messages[0].content += `\n- Sample residues: ${residueList.join(
               ", "
-            )}${residues.size > 10 ? " (and more)" : ""}`;
+            )}${residues.size > 50 ? " (and more)" : ""}`;
           }
         } catch (e) {
           console.error("Error extracting molecule data:", e);
@@ -99,7 +114,6 @@ The user is viewing a protein structure in a 3D molecular viewer. The visualizat
       }
     }
 
-    // Add chat history
     chatHistory.forEach((msg) => {
       messages.push({
         role: msg.type === "user" ? "user" : "assistant",
@@ -107,15 +121,13 @@ The user is viewing a protein structure in a 3D molecular viewer. The visualizat
       });
     });
 
-    // Add the current user query
     messages.push({
       role: "user",
       content: userQuery,
     });
 
-    // Make the API call
     const completion = await openai.chat.completions.create({
-      model: "gpt-4.1", // Use a capable model for molecular biology knowledge
+      model: "gpt-4.1",
       messages: messages,
     });
 
@@ -126,14 +138,8 @@ The user is viewing a protein structure in a 3D molecular viewer. The visualizat
   }
 }
 
-/**
- * Fetch additional protein information from the PDB database
- * @param {string} pdbId - The PDB ID to fetch information for
- * @returns {Promise<Object>} - Detailed protein information
- */
 export async function fetchProteinInfo(pdbId) {
   try {
-    // Fetch from PDB API
     const response = await fetch(
       `https://data.rcsb.org/rest/v1/core/entry/${pdbId}`
     );
@@ -147,5 +153,93 @@ export async function fetchProteinInfo(pdbId) {
   }
 }
 
-// Export the OpenAI client for potential direct use
+export async function fetchProteinSequence(pdbId) {
+  try {
+    // First, get summary information about the protein to know the number of entities
+    const summaryResponse = await fetch(
+      `https://data.rcsb.org/rest/v1/core/entry/${pdbId}`
+    );
+
+    if (!summaryResponse.ok) {
+      throw new Error(
+        `Failed to fetch protein summary: ${summaryResponse.statusText}`
+      );
+    }
+
+    const summaryData = await summaryResponse.json();
+
+    // Check if we have polymer entity information available
+    if (
+      !summaryData ||
+      !summaryData.rcsb_entry_info ||
+      !summaryData.rcsb_entry_info.polymer_entity_count
+    ) {
+      console.warn(`No entity count information for ${pdbId}`);
+      // Try with entity 1 as fallback
+      return fetchSingleEntitySequence(pdbId, 1);
+    }
+
+    const entityCount = summaryData.rcsb_entry_info.polymer_entity_count;
+
+    // If there's only one entity, fetch it directly
+    if (entityCount === 1) {
+      return fetchSingleEntitySequence(pdbId, 1);
+    }
+
+    // For multiple entities, we'll fetch the first one for now
+    // In a more advanced version, we could fetch all and combine them
+    // However, that would make the data structure more complex
+    const mainEntitySequence = await fetchSingleEntitySequence(pdbId, 1);
+
+    // If unsuccessful with first entity, try the second one
+    if (!mainEntitySequence && entityCount > 1) {
+      return fetchSingleEntitySequence(pdbId, 2);
+    }
+
+    return mainEntitySequence;
+  } catch (error) {
+    console.error(`Error fetching sequence for ${pdbId}:`, error);
+    return null;
+  }
+}
+
+// Helper function to fetch a single entity sequence
+async function fetchSingleEntitySequence(pdbId, entityId) {
+  try {
+    // Use the PDB REST API to get the entity information which contains sequences
+    const response = await fetch(
+      `https://data.rcsb.org/rest/v1/core/polymer_entity/${pdbId}/${entityId}`
+    );
+
+    if (!response.ok) {
+      console.warn(
+        `Failed to fetch sequence for entity ${entityId}: ${response.statusText}`
+      );
+      return null;
+    }
+
+    const data = await response.json();
+
+    // Check if the entity contains sequence information
+    if (data && data.entity_poly && data.entity_poly.pdbx_seq_one_letter_code) {
+      return {
+        sequence: data.entity_poly.pdbx_seq_one_letter_code,
+        description: data.rcsb_polymer_entity
+          ?.rcsb_polymer_entity_container_identifiers?.auth_asym_ids || ["A"],
+        type: data.entity_poly.type || "polypeptide(L)",
+        entityId: entityId,
+      };
+    } else {
+      console.warn(`No sequence data found for entity ${entityId}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(
+      `Error fetching sequence for ${pdbId} entity ${entityId}:`,
+      error
+    );
+    return null;
+  }
+}
+
 export default openai;
