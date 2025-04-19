@@ -445,6 +445,12 @@
         transition: opacity 0.2s ease;
       }
 
+      .header-divider {
+        height: 1px;
+        background-color: #e0e0e0;
+        margin: 0 0 12px 0;
+      }
+
       .chat-messages {
         flex: 1;
         overflow-y: auto;
@@ -890,8 +896,8 @@
             </div>
           </div>
           <div class="visualization-controls">
-            <h3>Visualization Options</h3>
-            <label for="style-select">Rendering Style:</label>
+            <!-- <h3>Visualization Options</h3> -->
+            <label for="style-select">Show as:</label>
             <select id="style-select">
               <option value="stick">Stick</option>
               <option value="line">Line</option>
@@ -919,6 +925,7 @@
           </div>
           <div class="chat-container">
             <h3>Protein AI Assistant</h3>
+            <div class="header-divider"></div>
             <div class="chat-messages" id="chat-messages">
               <div class="message system-message">
                 <div class="message-content">
