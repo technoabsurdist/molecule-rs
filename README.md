@@ -1,3 +1,5 @@
+<!-- <img src="logo-molecule-rs.png" width="200px" /> -->
+
 # molecule-rs
 
 A Rust-based molecular visualization library with WebAssembly integration.
