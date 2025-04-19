@@ -40,7 +40,7 @@
         font-weight: 600;
         color: #444;
         padding-bottom: 6px;
-        border-bottom: 1px solid #eee;
+        /* border-bottom: 1px solid #eee; */
       }
       .main {
         display: flex;
@@ -209,6 +209,48 @@
         text-align: center;
         color: #666;
         font-style: italic;
+      }
+
+      /* Visualization Controls in Viewer */
+      .visualization-controls {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 260px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+        transition: opacity 0.3s;
+      }
+
+      .visualization-controls h3 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: #333;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+      }
+
+      .visualization-controls label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 500;
+        font-size: 13px;
+      }
+
+      .visualization-controls select,
+      .visualization-controls button {
+        width: 100%;
+        margin-bottom: 8px;
+      }
+
+      /* Hide when loading */
+      .loading:not([style*="display: none"]) ~ .visualization-controls {
+        opacity: 0.3;
+        pointer-events: none;
       }
     </style>
     <style>
@@ -740,8 +782,11 @@
           </div>
 
           <div class="section-divider"></div>
-
-          <div class="styling-controls">
+        </div>
+        <div class="viewer-container">
+          <div id="viewer"></div>
+          <div class="loading" id="loading-indicator">Loading...</div>
+          <div class="visualization-controls">
             <h3>Visualization Options</h3>
             <label for="style-select">Rendering Style:</label>
             <select id="style-select">
@@ -755,10 +800,6 @@
             <input type="hidden" id="color-scheme" value="chain" />
             <button id="apply-style">Apply Style</button>
           </div>
-        </div>
-        <div class="viewer-container">
-          <div id="viewer"></div>
-          <div class="loading" id="loading-indicator">Loading...</div>
         </div>
         <div class="sidebar sidebar-right">
           <div class="chat-container">

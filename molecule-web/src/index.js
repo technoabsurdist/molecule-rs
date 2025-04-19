@@ -126,16 +126,14 @@ function setupEventListeners() {
   const sequenceSection = document.createElement("div");
   sequenceSection.className = "sequence-container";
   sequenceSection.innerHTML = `
-    <div class="section-divider"></div>
     <h3>Protein Sequence</h3>
     <div id="sequence-display" class="sequence-display">
       <p class="no-sequence">No protein loaded. Use the search above to find a protein.</p>
     </div>
   `;
 
-  // Insert the sequence section after the styling controls
-  const stylingControls = document.querySelector(".styling-controls");
-  sidebar.insertBefore(sequenceSection, stylingControls.nextSibling);
+  // Add sequence section to the end of the sidebar
+  sidebar.appendChild(sequenceSection);
 
   let searchTimeout;
 
