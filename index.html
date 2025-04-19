@@ -280,6 +280,60 @@
       /* Hide empty state when molecule is loaded */
       .empty-state.hidden {
         display: none;
+      }
+
+      /* Protein Sequence Styles */
+      .sequence-container {
+        margin-bottom: 24px;
+      }
+
+      .sequence-display {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+        font-family: monospace;
+      }
+
+      .no-sequence {
+        color: #666;
+        font-style: italic;
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      .sequence-info {
+        margin-bottom: 12px;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .sequence-content {
+        font-size: 14px;
+        letter-spacing: 0.5px;
+      }
+
+      .sequence-line {
+        display: flex;
+        margin-bottom: 4px;
+        align-items: center;
+      }
+
+      .line-number {
+        color: #999;
+        font-size: 12px;
+        width: 40px;
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      .sequence-text {
+        flex: 1;
+        padding: 0 8px;
+        word-break: break-all;
+        letter-spacing: 2px;
       }</style><style>.github-link {
         display: inline-flex;
         align-items: center;
@@ -367,412 +421,7 @@
         to {
           transform: rotate(360deg);
         }
-      }
-
-      /* Chat Styles */
-      .sidebar-right {
-        width: 320px;
-        background-color: #f8f8f8;
-        border-left: 1px solid #e0e0e0;
-        border-right: none;
-        overflow-x: hidden;
-        position: relative;
-        transition: width 0.3s ease;
-      }
-
-      /* Sidebar collapse styles */
-      .sidebar-collapse-button {
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 18px;
-        height: 36px;
-        background-color: #f0f0f0;
-        border-radius: 0 4px 4px 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 100;
-        box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
-        border-left: 1px solid #e0e0e0;
-        transition: transform 0.3s ease;
-      }
-
-      .sidebar-collapse-button:hover {
-        background-color: #e8e8e8;
-      }
-
-      /* Collapsed state */
-      .sidebar-right.collapsed {
-        width: 0px;
-      }
-
-      .sidebar-right.collapsed .chat-container {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .sidebar-right.collapsed .sidebar-collapse-button {
-        transform: translateY(-50%) rotate(180deg);
-      }
-
-      /* Adjust the viewer container to expand when sidebar is collapsed */
-      .viewer-container {
-        flex: 1;
-        position: relative;
-        transition: flex 0.3s ease;
-      }
-
-      .chat-container {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        padding: 0 0 10px 0;
-        width: 100%;
-        box-sizing: border-box;
-        transition: opacity 0.2s ease;
-      }
-
-      .header-divider {
-        height: 1px;
-        background-color: #e0e0e0;
-        margin: 0 0 12px 0;
-      }
-
-      .chat-messages {
-        flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 10px;
-        width: 100%;
-        box-sizing: border-box;
-      }
-
-      .message {
-        display: flex;
-        margin: 8px 0;
-        max-width: 95%;
-        padding: 12px;
-        border-radius: 12px;
-        font-size: 14px;
-        line-height: 1.4;
-        box-sizing: border-box;
-      }
-
-      .user-message {
-        margin-left: auto;
-        background-color: #e3f2fd;
-        border-bottom-right-radius: 4px;
-      }
-
-      .assistant-message {
-        margin-right: auto;
-        background-color: #f1f1f1;
-        border-bottom-left-radius: 4px;
-      }
-
-      .system-message {
-        margin: 0 auto;
-        background-color: #f0f8f0;
-        border-radius: 8px;
-      }
-
-      .message-content {
-        word-break: break-word;
-        overflow-wrap: break-word;
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden;
-      }
-
-      /* Markdown styling */
-      .message-content strong {
-        font-weight: 600;
-      }
-
-      .message-content em {
-        font-style: italic;
-      }
-
-      .message-content code {
-        font-family: monospace;
-        background-color: #f5f5f5;
-        padding: 2px 4px;
-        border-radius: 4px;
-        font-size: 0.9em;
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
-
-      .message-content pre {
-        background-color: #f5f5f5;
-        border-radius: 6px;
-        padding: 12px;
-        overflow-x: auto;
-        margin: 8px 0;
-        max-width: 100%;
-      }
-
-      .message-content pre code {
-        background-color: transparent;
-        padding: 0;
-        border-radius: 0;
-        display: block;
-        font-size: 0.9em;
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
-
-      .message-content br {
-        margin-bottom: 8px;
-      }
-
-      /* Handle tables in message content */
-      .message-content table {
-        width: 100%;
-        max-width: 100%;
-        border-collapse: collapse;
-        margin: 10px 0;
-        font-size: 0.9em;
-      }
-
-      .message-content th,
-      .message-content td {
-        padding: 6px;
-        border: 1px solid #ddd;
-        text-align: left;
-        word-break: break-word;
-      }
-
-      .message-content th {
-        background-color: #f2f2f2;
-        font-weight: 600;
-      }
-
-      /* Make sure images don't overflow */
-      .message-content img {
-        max-width: 100%;
-        height: auto;
-      }
-
-      /* Sequence display in messages */
-      .message-content .protein-sequence {
-        font-family: monospace;
-        word-break: break-all;
-        white-space: pre-wrap;
-        font-size: 0.9em;
-        line-height: 1.5;
-        padding: 8px;
-        background-color: #f8f8f8;
-        border: 1px solid #eee;
-        border-radius: 4px;
-        margin: 8px 0;
-        max-width: 100%;
-        overflow-x: auto;
-      }
-
-      .chat-input-container {
-        display: flex;
-        position: relative;
-        border-top: 1px solid #e0e0e0;
-        padding: 15px 0 10px 0;
-        margin: 0;
-      }
-
-      #chat-input {
-        resize: none;
-        width: 100%;
-        padding: 12px 50px 12px 12px;
-        border-radius: 12px;
-        border: 1px solid #ddd;
-        font-size: 14px;
-        box-sizing: border-box;
-        outline: none;
-        transition: border-color 0.2s;
-        margin: 0;
-      }
-
-      #chat-input:focus {
-        border-color: #4caf50;
-      }
-
-      #send-message,
-      .send-message-button {
-        position: absolute;
-        right: 10px;
-        bottom: 15px;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        padding: 0;
-        margin: 0;
-        transition: all 0.2s ease;
-      }
-
-      #send-message:hover,
-      .send-message-button:hover {
-        background-color: #45a049;
-        transform: scale(1.05);
-      }
-
-      .chat-suggestions {
-        margin-top: 10px;
-      }
-
-      .chat-suggestions p {
-        font-size: 13px;
-        margin: 0 0 8px 0;
-        color: #666;
-      }
-
-      .suggestion-chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .suggestion-chip {
-        background-color: #e8f5e9;
-        border: 1px solid #c8e6c9;
-        padding: 6px 12px;
-        border-radius: 16px;
-        font-size: 13px;
-        cursor: pointer;
-        color: #2e7d32;
-        margin: 0;
-        white-space: nowrap;
-        width: auto;
-      }
-
-      .suggestion-chip:hover {
-        background-color: #c8e6c9;
-        box-shadow: none;
-      }
-
-      /* Typing indicator animation */
-      .typing-indicator {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-
-      .typing-indicator span {
-        width: 8px;
-        height: 8px;
-        background-color: #aaa;
-        border-radius: 50%;
-        display: inline-block;
-        animation: typing-animation 1.4s infinite ease-in-out both;
-      }
-
-      .typing-indicator span:nth-child(1) {
-        animation-delay: 0s;
-      }
-
-      .typing-indicator span:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-
-      .typing-indicator span:nth-child(3) {
-        animation-delay: 0.4s;
-      }
-
-      @keyframes typing-animation {
-        0%,
-        80%,
-        100% {
-          transform: scale(0.6);
-          opacity: 0.4;
-        }
-        40% {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-
-      /* Styles for syntax highlighting in code blocks */
-      .message pre {
-        background-color: #f5f5f5;
-        border-radius: 6px;
-        padding: 12px;
-        overflow-x: auto;
-        font-family: monospace;
-        margin: 8px 0;
-      }
-
-      .message code {
-        font-family: monospace;
-        background-color: #f5f5f5;
-        padding: 2px 4px;
-        border-radius: 4px;
-      }
-
-      /* Protein Sequence Styles */
-      .sequence-container {
-        margin-bottom: 24px;
-      }
-
-      .sequence-display {
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        padding: 12px;
-        max-height: 300px;
-        overflow-y: auto;
-        font-family: monospace;
-      }
-
-      .no-sequence {
-        color: #666;
-        font-style: italic;
-        text-align: center;
-        padding: 20px 0;
-      }
-
-      .sequence-info {
-        margin-bottom: 12px;
-        font-size: 13px;
-        line-height: 1.4;
-      }
-
-      .sequence-content {
-        font-size: 14px;
-        letter-spacing: 0.5px;
-      }
-
-      .sequence-line {
-        display: flex;
-        margin-bottom: 4px;
-        align-items: center;
-      }
-
-      .line-number {
-        color: #999;
-        font-size: 12px;
-        width: 40px;
-        text-align: right;
-        flex-shrink: 0;
-      }
-
-      .sequence-text {
-        flex: 1;
-        padding: 0 8px;
-        word-break: break-all;
-        letter-spacing: 2px;
-      }</style><script defer="defer" src="./index.js"></script></head><body><div class="container"><header><h1>molecule-rs demo</h1><div>rust + wasm + 3dmol <a href="https://github.com/technoabsurdist/molecule-rs" target="_blank" class="github-link"><svg height="24" width="24" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg></a></div></header><div class="main"><div class="sidebar"><div class="controls"><div class="search-container"><label for="search-input">Search PDB Database:</label><div class="search-input-group"><input id="search-input" placeholder="Name or PDB ID (e.g., Hemoglobin, 4HHB)"/></div><div id="search-results" class="search-results"></div></div><div class="drag-drop-container"><label>Drag & Drop PDB File:</label><div id="drop-zone" class="drop-zone"><div class="drop-zone-prompt"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> <span>Drop file here or click to upload</span></div><div id="drop-zone-loading" class="drop-zone-loading"><div class="spinner"></div><span>Processing file...</span></div><input type="file" id="file-input" accept=".pdb" class="file-input"/></div></div><div class="pdb-input-container"><label for="pdb-input">PDB Data:</label> <textarea id="pdb-input" placeholder="Paste PDB data here or use search above..."></textarea> <button id="load-pdb">Load PDB Data</button></div></div><div class="section-divider"></div></div><div class="viewer-container"><div id="viewer"></div><div class="loading" id="loading-indicator">Loading...</div><div class="empty-state" id="empty-state"><div class="empty-state-content"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg><p>Select a protein to start visualizing</p></div></div><div class="visualization-controls"><label for="style-select">Show as:</label> <select id="style-select"><option value="stick">Stick</option><option value="line">Line</option><option value="cross">Cross</option><option value="sphere">Sphere</option><option value="cartoon">Cartoon</option></select> <input type="hidden" id="color-scheme" value="chain"/> <button id="apply-style">Apply Style</button></div></div><div class="sidebar sidebar-right"><div class="sidebar-collapse-button" id="sidebar-collapse-button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></div><div class="chat-container"><h3>Protein AI Assistant</h3><div class="header-divider"></div><div class="chat-messages" id="chat-messages"><div class="message system-message"><div class="message-content">Welcome! I can answer questions about the protein structure you're viewing. What would you like to know?</div></div></div><div class="chat-input-container"><textarea id="chat-input" placeholder="Ask me anything..." rows="3"></textarea> <button id="send-message" class="send-message-button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button></div></div></div></div></div><script>// Add event listeners for drag and drop functionality
+      }</style><script defer="defer" src="./index.js"></script></head><body><div class="container"><header><h1>molecule-rs demo</h1><div>rust + wasm + 3dmol <a href="https://github.com/technoabsurdist/molecule-rs" target="_blank" class="github-link"><svg height="24" width="24" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg></a></div></header><div class="main"><div class="sidebar"><div class="controls"><div class="search-container"><label for="search-input">Search PDB Database:</label><div class="search-input-group"><input id="search-input" placeholder="Name or PDB ID (e.g., Hemoglobin, 4HHB)"/></div><div id="search-results" class="search-results"></div></div><div class="drag-drop-container"><label>Drag & Drop PDB File:</label><div id="drop-zone" class="drop-zone"><div class="drop-zone-prompt"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> <span>Drop file here or click to upload</span></div><div id="drop-zone-loading" class="drop-zone-loading"><div class="spinner"></div><span>Processing file...</span></div><input type="file" id="file-input" accept=".pdb" class="file-input"/></div></div><div class="pdb-input-container"><label for="pdb-input">PDB Data:</label> <textarea id="pdb-input" placeholder="Paste PDB data here or use search above..."></textarea> <button id="load-pdb">Load PDB Data</button></div></div><div class="section-divider"></div></div><div class="viewer-container"><div id="viewer"></div><div class="loading" id="loading-indicator">Loading...</div><div class="empty-state" id="empty-state"><div class="empty-state-content"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg><p>Select a protein to start visualizing</p></div></div><div class="visualization-controls"><label for="style-select">Show as:</label> <select id="style-select"><option value="stick">Stick</option><option value="line">Line</option><option value="cross">Cross</option><option value="sphere">Sphere</option><option value="cartoon">Cartoon</option></select> <input type="hidden" id="color-scheme" value="chain"/> <button id="apply-style">Apply Style</button></div></div></div></div><script>// Add event listeners for drag and drop functionality
       document.addEventListener("DOMContentLoaded", function () {
         const dropZone = document.getElementById("drop-zone");
         const fileInput = document.getElementById("file-input");
