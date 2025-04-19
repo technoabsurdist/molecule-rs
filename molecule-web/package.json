@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "description": "Web demonstration of molecule-rs WebAssembly integration with 3Dmol.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
+    "build": "webpack --config webpack.config.js --mode production",
+    "build:dev": "webpack --config webpack.config.js",
     "start": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

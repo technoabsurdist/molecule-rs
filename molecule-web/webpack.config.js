@@ -23,34 +23,44 @@ const envKeys = env
     }, {})
   : {};
 
-module.exports = {
-  entry: "./src/index.js",
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "index.js",
-  },
-  mode: "development",
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: "./src/index.html",
-    }),
-    // new CopyPlugin({
-    //   patterns: [{ from: "./public", to: "./" }],
-    // }),
-    new WasmPackPlugin({
-      crateDirectory: path.resolve(__dirname, "../molecule-wasm"),
-      outDir: path.resolve(__dirname, "pkg"),
-    }),
-    new webpack.DefinePlugin(envKeys),
-  ],
-  experiments: {
-    asyncWebAssembly: true,
-  },
-  devServer: {
-    static: {
-      directory: path.join(__dirname, "dist"),
+module.exports = (env, argv) => {
+  const isProduction = argv.mode === "production";
+
+  return {
+    entry: "./src/index.js",
+    output: {
+      path: path.resolve(__dirname, "dist"),
+      filename: "index.js",
+      publicPath: isProduction ? "./" : "/",
     },
-    compress: true,
-    port: 8080,
-  },
+    mode: argv.mode || "development",
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: "./src/index.html",
+      }),
+      // Enable this if you have static assets in the public directory
+      new CopyPlugin({
+        patterns: [{ from: "./public", to: "./" }],
+      }),
+      new WasmPackPlugin({
+        crateDirectory: path.resolve(__dirname, "../molecule-wasm"),
+        outDir: path.resolve(__dirname, "pkg"),
+        forceMode: isProduction ? "production" : "development",
+      }),
+      new webpack.DefinePlugin(envKeys),
+    ],
+    experiments: {
+      asyncWebAssembly: true,
+    },
+    devServer: {
+      static: {
+        directory: path.join(__dirname, "dist"),
+      },
+      compress: true,
+      port: 8080,
+    },
+    optimization: {
+      minimize: isProduction,
+    },
+  };
 };

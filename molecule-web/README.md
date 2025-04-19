@@ -78,3 +78,56 @@ The application is built with:
 ## License
 
 MIT
+
+## GitHub Pages Deployment
+
+This project is set up to automatically deploy to GitHub Pages when changes are pushed to the main branch. The deployment is handled by a GitHub Actions workflow in `.github/workflows/github-pages.yml`.
+
+### Manual Deployment
+
+If you need to deploy manually:
+
+1. Build the project:
+
+   ```
+   cd molecule-web
+   npm run build
+   ```
+
+2. The built files will be in the `dist` directory. These can be deployed to any static hosting service.
+
+### Local Development
+
+1. Install dependencies:
+
+   ```
+   cd molecule-web
+   npm install
+   ```
+
+2. Start the development server:
+
+   ```
+   npm start
+   ```
+
+3. Open your browser at http://localhost:8080
+
+### Building the WASM Module
+
+The WebAssembly module is built automatically when running the build process. If you need to build it manually:
+
+1. Install wasm-pack:
+
+   ```
+   curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+   ```
+
+2. Build the WASM module:
+
+   ```
+   cd molecule-wasm
+   wasm-pack build --target web
+   ```
+
+3. The built module will be in the `pkg` directory.
