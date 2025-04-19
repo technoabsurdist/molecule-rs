@@ -282,6 +282,9 @@ async function loadPdbData(pdbData) {
     document.getElementById("loading-indicator").textContent =
       "Processing molecule...";
 
+    // Hide the empty state when loading a molecule
+    document.getElementById("empty-state").classList.add("hidden");
+
     // Use our Rust WASM module to process the PDB data and get a formatted PDB string
     const pdbString = prepare_for_3dmol(pdbData);
 
