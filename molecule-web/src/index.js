@@ -24,9 +24,23 @@ async function initializeApp() {
     // Make sure empty state is visible initially
     document.getElementById("empty-state").classList.remove("hidden");
 
-    viewer = $3Dmol.createViewer(document.getElementById("viewer"), {
+    // Create viewer with mobile-friendly options
+    const viewerOptions = {
       backgroundColor: "white",
-    });
+      antialias: true,
+      disableFog: true,
+    };
+
+    // Add mobile-specific touch options
+    if ("ontouchstart" in window) {
+      // Adjust settings to be more touch-friendly
+      viewerOptions.cameraSensitivity = 0.2; // More sensitive for touch
+    }
+
+    viewer = $3Dmol.createViewer(
+      document.getElementById("viewer"),
+      viewerOptions
+    );
 
     setupEventListeners();
   } catch (error) {
@@ -214,6 +228,59 @@ function setupEventListeners() {
 
     applyStyle();
   });
+
+  // Add touch-specific event handlers for mobile devices
+  if ("ontouchstart" in window) {
+    const viewerElement = document.getElementById("viewer");
+
+    // Prevent default touch actions to avoid browser gestures interfering with the viewer
+    viewerElement.addEventListener(
+      "touchstart",
+      function (e) {
+        if (e.touches.length > 1) {
+          e.preventDefault(); // Prevent pinch zoom of the page when interacting with the viewer
+        }
+      },
+      { passive: false }
+    );
+
+    // Add double-tap to reset view
+    let lastTap = 0;
+    viewerElement.addEventListener("touchend", function (e) {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTap;
+      if (tapLength < 300 && tapLength > 0) {
+        // Double tap detected
+        if (viewer && currentMolecule) {
+          viewer.zoomTo();
+          viewer.render();
+        }
+        e.preventDefault();
+      }
+      lastTap = currentTime;
+    });
+
+    // Handle orientation changes
+    window.addEventListener("orientationchange", function () {
+      // Wait for the orientation change to complete
+      setTimeout(() => {
+        if (viewer && currentMolecule) {
+          // Adjust viewer to new dimensions
+          viewer.resize();
+
+          // Reset camera view after resize
+          viewer.zoomTo();
+          viewer.render();
+
+          // On orientation change, ensure sidebar is collapsed on mobile
+          const sidebar = document.querySelector(".sidebar");
+          if (window.innerWidth <= 768) {
+            sidebar.classList.remove("expanded");
+          }
+        }
+      }, 300);
+    });
+  }
 }
 
 async function loadPdbById(pdbId) {
@@ -290,9 +357,17 @@ async function loadPdbData(pdbData) {
     // Apply initial style
     applyStyle(styleType, colorScheme);
 
-    // Show the molecule
-    viewer.zoomTo();
-    viewer.render();
+    // Show the molecule - adjust zoom behavior for mobile
+    if ("ontouchstart" in window && window.innerWidth <= 768) {
+      // For mobile, add a slight delay to make sure everything is rendered before zooming
+      setTimeout(() => {
+        viewer.zoomTo();
+        viewer.render();
+      }, 100);
+    } else {
+      viewer.zoomTo();
+      viewer.render();
+    }
 
     document.getElementById("loading-indicator").style.display = "none";
   } catch (error) {
