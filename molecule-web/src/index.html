@@ -386,6 +386,53 @@
         border-left: 1px solid #e0e0e0;
         border-right: none;
         overflow-x: hidden;
+        position: relative;
+        transition: width 0.3s ease;
+      }
+
+      /* Sidebar collapse styles */
+      .sidebar-collapse-button {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 36px;
+        background-color: #f0f0f0;
+        border-radius: 0 4px 4px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 100;
+        box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+        border-left: 1px solid #e0e0e0;
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar-collapse-button:hover {
+        background-color: #e8e8e8;
+      }
+
+      /* Collapsed state */
+      .sidebar-right.collapsed {
+        width: 0px;
+      }
+
+      .sidebar-right.collapsed .chat-container {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .sidebar-right.collapsed .sidebar-collapse-button {
+        transform: translateY(-50%) rotate(180deg);
+      }
+
+      /* Adjust the viewer container to expand when sidebar is collapsed */
+      .viewer-container {
+        flex: 1;
+        position: relative;
+        transition: flex 0.3s ease;
       }
 
       .chat-container {
@@ -395,6 +442,7 @@
         padding: 0 0 10px 0;
         width: 100%;
         box-sizing: border-box;
+        transition: opacity 0.2s ease;
       }
 
       .chat-messages {
@@ -857,6 +905,18 @@
           </div>
         </div>
         <div class="sidebar sidebar-right">
+          <div class="sidebar-collapse-button" id="sidebar-collapse-button">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
           <div class="chat-container">
             <h3>Protein AI Assistant</h3>
             <div class="chat-messages" id="chat-messages">

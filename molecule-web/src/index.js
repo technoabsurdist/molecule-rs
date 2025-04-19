@@ -139,6 +139,23 @@ function setupEventListeners() {
   // Add sequence section to the end of the sidebar
   sidebar.appendChild(sequenceSection);
 
+  // Setup sidebar collapse functionality
+  const sidebarCollapseButton = document.getElementById(
+    "sidebar-collapse-button"
+  );
+  const sidebarRight = document.querySelector(".sidebar-right");
+
+  sidebarCollapseButton.addEventListener("click", () => {
+    sidebarRight.classList.toggle("collapsed");
+
+    // Give time for the transition to complete before re-rendering the viewer
+    setTimeout(() => {
+      if (viewer && currentMolecule) {
+        viewer.resize();
+      }
+    }, 350);
+  });
+
   let searchTimeout;
 
   searchInput.addEventListener("input", (e) => {
