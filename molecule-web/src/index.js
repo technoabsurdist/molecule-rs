@@ -25,7 +25,11 @@ async function initializeApp() {
     await init();
     console.log("WASM module initialized");
 
+    // Hide loading indicator initially
     document.getElementById("loading-indicator").style.display = "none";
+
+    // Make sure empty state is visible initially
+    document.getElementById("empty-state").classList.remove("hidden");
 
     viewer = $3Dmol.createViewer(document.getElementById("viewer"), {
       backgroundColor: "white",
