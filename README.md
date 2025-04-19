@@ -2,6 +2,8 @@
   <img src="./molecule-web/logo-molecule-rs.png" width="200" alt="molecule-rs logo">
 </p>
 
+online demo: [technoabsurdist.github.io/molecule-rs/](technoabsurdist.github.io/molecule-rs/)
+
 ## molecule-rs
 
 molecule-rs is a high-performance molecular visualization and analysis toolkit built with Rust. It's designed to parse, process, and visualize molecular structures.
