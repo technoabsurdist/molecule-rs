@@ -1,10 +1,6 @@
 import * as $3Dmol from "3dmol";
 import { init, prepare_for_3dmol } from "../pkg/index";
-import {
-  generateProteinResponse,
-  fetchProteinInfo,
-  fetchProteinSequence,
-} from "./api";
+import { fetchProteinInfo, fetchProteinSequence } from "./api";
 
 // Initialize the viewer and protein data store
 let viewer = null;
@@ -16,9 +12,6 @@ let currentProteinData = {
   info: null,
   sequence: null,
 };
-
-// Store chat history for context
-let chatHistory = [];
 
 async function initializeApp() {
   try {
@@ -139,23 +132,6 @@ function setupEventListeners() {
   // Add sequence section to the end of the sidebar
   sidebar.appendChild(sequenceSection);
 
-  // Setup sidebar collapse functionality
-  const sidebarCollapseButton = document.getElementById(
-    "sidebar-collapse-button"
-  );
-  const sidebarRight = document.querySelector(".sidebar-right");
-
-  sidebarCollapseButton.addEventListener("click", () => {
-    sidebarRight.classList.toggle("collapsed");
-
-    // Give time for the transition to complete before re-rendering the viewer
-    setTimeout(() => {
-      if (viewer && currentMolecule) {
-        viewer.resize();
-      }
-    }, 350);
-  });
-
   let searchTimeout;
 
   searchInput.addEventListener("input", (e) => {
@@ -238,9 +214,6 @@ function setupEventListeners() {
 
     applyStyle();
   });
-
-  // Setup chat functionality
-  setupChatFunctionality();
 }
 
 async function loadPdbById(pdbId) {
@@ -276,17 +249,6 @@ async function loadPdbById(pdbId) {
     updateSequenceDisplay(sequenceData);
 
     await loadPdbData(pdbData);
-
-    // Reset chat history when loading a new protein
-    chatHistory = [];
-    const chatMessages = document.getElementById("chat-messages");
-    chatMessages.innerHTML = "";
-
-    // Add a welcome message specific to this protein
-    addMessage(
-      `Welcome! I'm ready to answer questions about ${currentProteinData.title} (PDB ID: ${pdbId}).`,
-      "system"
-    );
   } catch (error) {
     console.error("Error loading PDB:", error);
     document.getElementById("loading-indicator").textContent =
@@ -458,193 +420,6 @@ function applyChainColoring(styleType, styleOptions) {
     viewer.setStyle({}, style);
   }
 }
-
-// Function to set up the chat functionality
-function setupChatFunctionality() {
-  const chatInput = document.getElementById("chat-input");
-  const sendButton = document.getElementById("send-message");
-  const chatMessages = document.getElementById("chat-messages");
-  const suggestionChips = document.querySelectorAll(".suggestion-chip");
-
-  // Function to parse and render simple Markdown in message content
-  function parseMarkdown(text) {
-    if (!text) return "";
-
-    // Sanitize HTML to prevent XSS attacks
-    text = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-    // Replace code blocks with HTML <pre><code> tags (do this first to prevent formatting inside code)
-    text = text.replace(/```([\s\S]*?)```/g, function (match, code) {
-      // Don't process markdown inside code blocks
-      return "<pre><code>" + code.trim() + "</code></pre>";
-    });
-
-    // Replace inline code with HTML <code> tags
-    text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
-
-    // Replace bold markdown (**text**) with HTML <strong> tags
-    text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-
-    // Replace italic markdown (*text*) with HTML <em> tags
-    // Negative lookahead to avoid matching inside already processed bold text
-    text = text.replace(/\*(?!\*)(.*?)(?<!\*)\*/g, "<em>$1</em>");
-
-    // Replace ordered lists
-    text = text.replace(/^\d+\.\s+(.+)$/gm, "<li>$1</li>");
-    text = text.replace(/(<li>.*<\/li>)/s, "<ol>$1</ol>");
-
-    // Replace unordered lists
-    text = text.replace(/^[\*\-]\s+(.+)$/gm, "<li>$1</li>");
-    text = text.replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>");
-
-    // Handle paragraphs and line breaks
-    text = text.replace(/\n\n/g, "</p><p>");
-    text = text.replace(/\n/g, "<br>");
-
-    // Wrap with paragraph if not already wrapped
-    if (!text.startsWith("<p>")) {
-      text = "<p>" + text + "</p>";
-    }
-
-    return text;
-  }
-
-  // Function to add a message to the chat
-  function addMessage(text, type) {
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `message ${type}-message`;
-
-    const messageContent = document.createElement("div");
-    messageContent.className = "message-content";
-
-    // Use innerHTML with parsed markdown instead of textContent
-    messageContent.innerHTML = parseMarkdown(text);
-
-    messageDiv.appendChild(messageContent);
-    chatMessages.appendChild(messageDiv);
-
-    // Save message to history (except system messages)
-    if (type !== "system") {
-      chatHistory.push({ type, content: text });
-
-      // Limit history to last 10 messages to keep context window manageable
-      if (chatHistory.length > 10) {
-        chatHistory = chatHistory.slice(chatHistory.length - 10);
-      }
-    }
-
-    // Scroll to the bottom of the chat
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  // Handle sending a message
-  async function sendMessage() {
-    const text = chatInput.value.trim();
-    if (!text) return;
-
-    // Add user message to chat
-    addMessage(text, "user");
-
-    // Clear input
-    chatInput.value = "";
-
-    // Show loading indicator
-    const loadingDiv = document.createElement("div");
-    loadingDiv.className = "message assistant-message loading-message";
-    loadingDiv.innerHTML =
-      '<div class="message-content"><div class="typing-indicator"><span></span><span></span><span></span></div></div>';
-    chatMessages.appendChild(loadingDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-
-    try {
-      // Check if a protein is loaded
-      if (!currentMolecule || !currentProteinData.pdbId) {
-        // Remove loading indicator
-        chatMessages.removeChild(loadingDiv);
-
-        // Add response for when no protein is loaded
-        addMessage(
-          "Please load a protein structure first to ask questions about it.",
-          "assistant"
-        );
-        return;
-      }
-
-      // Generate response using OpenAI API
-      const response = await generateProteinResponse(
-        text,
-        currentProteinData,
-        chatHistory
-      );
-
-      // Remove loading indicator
-      chatMessages.removeChild(loadingDiv);
-
-      // Add the response
-      addMessage(response, "assistant");
-    } catch (error) {
-      console.error("Error getting response:", error);
-
-      // Remove loading indicator
-      chatMessages.removeChild(loadingDiv);
-
-      // Add error message
-      addMessage(
-        "I'm sorry, I encountered an error while processing your question. Please try again.",
-        "assistant"
-      );
-    }
-  }
-
-  // Send message when clicking the send button
-  sendButton.addEventListener("click", sendMessage);
-
-  // Send message when pressing Enter (but allow Shift+Enter for new lines)
-  chatInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // Prevent default to avoid new line
-      sendMessage();
-    }
-  });
-
-  // Handle suggestion chips
-  suggestionChips.forEach((chip) => {
-    chip.addEventListener("click", () => {
-      chatInput.value = chip.textContent;
-      sendMessage();
-    });
-  });
-}
-
-// Update the global addMessage function too
-window.addMessage = function (text, type) {
-  const chatMessages = document.getElementById("chat-messages");
-
-  const messageDiv = document.createElement("div");
-  messageDiv.className = `message ${type}-message`;
-
-  const messageContent = document.createElement("div");
-  messageContent.className = "message-content";
-
-  // Use innerHTML with parsed markdown instead of textContent
-  messageContent.innerHTML = parseMarkdown(text);
-
-  messageDiv.appendChild(messageContent);
-  chatMessages.appendChild(messageDiv);
-
-  // Save message to history (except system messages)
-  if (type !== "system") {
-    chatHistory.push({ type, content: text });
-
-    // Limit history to last 10 messages to keep context window manageable
-    if (chatHistory.length > 10) {
-      chatHistory = chatHistory.slice(chatHistory.length - 10);
-    }
-  }
-
-  // Scroll to the bottom of the chat
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-};
 
 // Function to update the sequence display in the sidebar
 function updateSequenceDisplay(sequenceData) {
