@@ -2,7 +2,7 @@
   <img src="./molecule-web-react/logo-molecule-rs.png" width="200" alt="molecule-rs logo">
 </p>
 
-online demo: [https://molecule-rs.vercel.app/](technoabsurdist.github.io/molecule-rs/)
+online demo: [molecule-rs.vercel.app](https://molecule-rs.vercel.app/)
 
 to use the demo, search any molecule in the search bar and click on it. This will load and render the molecule.
 
