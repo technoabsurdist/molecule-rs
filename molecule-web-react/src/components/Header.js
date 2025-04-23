@@ -1,10 +1,12 @@
 import React from "react";
 import "../App.css";
+import logo from "../logo-molecule-rs.png";
 
 const Header = () => {
   return (
     <header className="header">
       <div className="logo">
+        <img src={logo} alt="molecule.rs logo" className="logo-image" />
         <h1>molecule.rs</h1>
       </div>
       <div className="header-right">

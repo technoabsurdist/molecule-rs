@@ -41,6 +41,12 @@ body {
   margin: 0;
 }
 
+.logo-image {
+  height: 32px;
+  width: auto;
+  margin-right: 10px;
+}
+
 .header-right {
   display: flex;
   align-items: center;
@@ -131,6 +137,15 @@ body {
     cursor: pointer;
     border-radius: 0 4px 4px 0;
     z-index: 11;
+  }
+
+  .logo-image {
+    height: 24px;
+    margin-right: 6px;
+  }
+
+  .logo h1 {
+    font-size: 1.2rem;
   }
 }
 
