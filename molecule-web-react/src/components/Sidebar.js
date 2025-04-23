@@ -168,12 +168,12 @@ const Sidebar = ({
 
       <div className="sidebar-content">
         <div className="search-container">
-          <h3>Search PDB</h3>
+          <h3>Search Protein</h3>
           <div className="search-input-container">
             <input
               id="search-input"
               type="text"
-              placeholder="Search for protein structures..."
+              placeholder="Search by protein name..."
               value={searchTerm}
               onChange={handleSearchInputChange}
             />
