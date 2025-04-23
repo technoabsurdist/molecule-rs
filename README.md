@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./molecule-web/logo-molecule-rs.png" width="200" alt="molecule-rs logo">
+  <img src="./molecule-web-react/logo-molecule-rs.png" width="200" alt="molecule-rs logo">
 </p>
 
 online demo: [technoabsurdist.github.io/molecule-rs/](technoabsurdist.github.io/molecule-rs/)
