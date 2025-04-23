@@ -288,6 +288,7 @@ select {
   margin-top: 1rem;
   border-top: 1px solid #eee;
   padding-top: 1rem;
+  width: 100%;
 }
 
 .sequence-display {
@@ -313,22 +314,28 @@ select {
 .sequence-content {
   font-family: monospace;
   white-space: pre-wrap;
+  overflow-x: hidden;
 }
 
 .sequence-line {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 0.25rem;
+  flex-wrap: wrap;
 }
 
 .line-number {
   color: #999;
   font-size: 0.8rem;
-  width: 40px;
+  min-width: 40px;
   text-align: right;
   padding-right: 0.5rem;
+  flex-shrink: 0;
 }
 
 .sequence-text {
-  letter-spacing: 0.1rem;
+  letter-spacing: 0.05rem;
+  word-break: break-all;
+  flex: 1;
+  min-width: 0;
 }

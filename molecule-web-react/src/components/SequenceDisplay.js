@@ -28,10 +28,13 @@ const SequenceDisplay = ({ sequenceData }) => {
 
     for (let i = 0; i < sequence.length; i += 50) {
       const chunk = sequence.substring(i, i + 50);
+      // Insert a non-breaking space every 10 characters to improve readability
+      const formattedChunk = chunk.match(/.{1,10}/g)?.join(" ") || chunk;
+
       formattedLines.push(
         <div className="sequence-line" key={i}>
           <span className="line-number">{lineNumber}</span>
-          <span className="sequence-text">{chunk}</span>
+          <span className="sequence-text">{formattedChunk}</span>
           <span className="line-number">
             {Math.min(lineNumber + 49, sequence.length)}
           </span>
