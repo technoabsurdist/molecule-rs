@@ -12,6 +12,7 @@ const Viewer = ({
   setSidebarExpanded,
   styleType,
   setStyleType,
+  loadPdbById,
 }) => {
   const viewerRef = useRef(null);
   const containerRef = useRef(null);
@@ -248,11 +249,36 @@ const Viewer = ({
           id="empty-state"
           className={`empty-state ${pdbData ? "hidden" : ""}`}
         >
-          <h2>No Molecule Loaded</h2>
-          <p>
-            Use the search bar or paste PDB data in the sidebar to visualize a
-            molecule.
-          </p>
+          <div className="empty-state-content">
+            <h2>No Molecule Loaded</h2>
+            <p>
+              Use the search bar or paste PDB data in the sidebar to visualize a
+              molecule.
+            </p>
+            <div className="molecule-suggestions">
+              <p className="suggestion-label">Or try one of these:</p>
+              <div className="suggestion-pills">
+                <button 
+                  className="suggestion-pill"
+                  onClick={() => loadPdbById("1A3N")}
+                >
+                  Hemoglobin (1A3N)
+                </button>
+                <button 
+                  className="suggestion-pill"
+                  onClick={() => loadPdbById("7YRD")}
+                >
+                  Histone Methyltransferase (7YRD)
+                </button>
+                <button 
+                  className="suggestion-pill"
+                  onClick={() => loadPdbById("1CRN")}
+                >
+                  Crambin (1CRN)
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

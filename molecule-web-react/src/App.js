@@ -147,6 +147,7 @@ function App() {
           setSidebarExpanded={setSidebarExpanded}
           styleType={styleType}
           setStyleType={setStyleType}
+          loadPdbById={loadPdbById}
         />
       </div>
     </div>
