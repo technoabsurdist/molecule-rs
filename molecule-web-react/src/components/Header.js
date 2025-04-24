@@ -1,12 +1,14 @@
 import React from "react";
 import "../App.css";
-import logo from "../logo-molecule-rs.png";
+import MoleculeIcon from "./MoleculeIcon";
 
 const Header = () => {
   return (
     <header className="header">
       <div className="logo">
-        <img src={logo} alt="molecule.rs logo" className="logo-image" />
+        <div className="logo-image">
+          <MoleculeIcon width={36} height={36} bondColor="#ffffff" />
+        </div>
         <h1>molecule.rs</h1>
       </div>
       <div className="header-right">

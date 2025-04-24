@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./molecule-web-react/logo-molecule-rs.png" width="200" alt="molecule-rs logo">
+  <img src="./molecule-icon.svg" width="200" alt="molecule-rs logo">
 </p>
 
 online demo: [molecule-rs.vercel.app](https://molecule-rs.vercel.app/)

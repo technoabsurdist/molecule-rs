@@ -247,17 +247,7 @@ select {
   height: 100%;
 }
 
-.loading-indicator {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  z-index: 20;
-}
+/* Loading state has been replaced by the new empty state design */
 
 .empty-state {
   position: absolute;
@@ -279,6 +269,14 @@ select {
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.molecule-icon,
+.loading-icon {
+  margin-bottom: 2rem;
 }
 
 .empty-state h2 {
@@ -290,6 +288,66 @@ select {
 .empty-state p {
   color: #7f8c8d;
   margin-bottom: 1.5rem;
+}
+
+/* Animation for loading spinner rotation */
+.rotating {
+  animation: spin 4s linear infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animations for individual atoms */
+.atom {
+  animation: pulse 2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.atom1 { animation-delay: 0s; }
+.atom2 { animation-delay: 0.5s; }
+.atom3 { animation-delay: 1s; }
+.atom4 { animation-delay: 1.5s; }
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+/* Animation for bonds */
+.bond {
+  animation: glow 2s ease-in-out infinite;
+  stroke-width: 0.5px;
+}
+
+.bond1 { animation-delay: 0s; }
+.bond2 { animation-delay: 0.5s; }
+.bond3 { animation-delay: 1s; }
+.bond4 { animation-delay: 1.5s; }
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.5;
+    stroke-width: 0.5px;
+  }
+  50% {
+    opacity: 1;
+    stroke-width: 0.8px;
+  }
 }
 
 .molecule-suggestions {

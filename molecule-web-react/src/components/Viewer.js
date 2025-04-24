@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as $3Dmol from "3dmol";
 import "../App.css";
+import MoleculeIcon from "./MoleculeIcon";
 
 const Viewer = ({
   pdbData,
@@ -238,18 +239,15 @@ const Viewer = ({
 
   return (
     <div className="viewer-container" ref={containerRef}>
-      {loading && (
-        <div id="loading-indicator" className="loading-indicator">
-          Processing molecule...
-        </div>
-      )}
-
-      {!pdbData && (
+      {!pdbData && !loading && (
         <div
           id="empty-state"
-          className={`empty-state ${pdbData ? "hidden" : ""}`}
+          className="empty-state"
         >
           <div className="empty-state-content">
+            <div className="molecule-icon">
+              <MoleculeIcon width={80} height={80} />
+            </div>
             <h2>No Molecule Loaded</h2>
             <p>
               Use the search bar or paste PDB data in the sidebar to visualize a
@@ -281,13 +279,25 @@ const Viewer = ({
           </div>
         </div>
       )}
+      
+      {loading && (
+        <div id="loading-state" className="empty-state">
+          <div className="empty-state-content">
+            <div className="loading-icon">
+              <MoleculeIcon width={80} height={80} animated={true} rotating={true} />
+            </div>
+            <h2>Loading Molecule</h2>
+            <p>Processing molecular data...</p>
+          </div>
+        </div>
+      )}
 
       <div
         id="viewer"
         ref={viewerRef}
         className="viewer"
         style={{
-          display: pdbData ? "block" : "none",
+          display: pdbData && !loading ? "block" : "none",
           height: "100%",
           width: "100%",
         }}
