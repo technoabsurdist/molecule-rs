@@ -37,7 +37,7 @@ const Sidebar = ({
   }, []);
 
   const handleSearch = async (query) => {
-    if (query.length < 3) {
+    if (query.length < 2) {
       setSearchResults([]);
       return;
     }
@@ -58,6 +58,22 @@ const Sidebar = ({
               parameters: {
                 attribute: "struct.title",
                 operator: "contains_words",
+                value: query,
+              },
+            },
+            {
+              type: "terminal",
+              service: "text",
+              parameters: {
+                attribute: "rcsb_id",
+                operator: "exact_match",
+                value: query,
+              },
+            },
+            {
+              type: "terminal",
+              service: "full_text",
+              parameters: {
                 value: query,
               },
             },
@@ -173,7 +189,7 @@ const Sidebar = ({
             <input
               id="search-input"
               type="text"
-              placeholder="Search by protein name..."
+              placeholder="Search by protein name or PDB ID..."
               value={searchTerm}
               onChange={handleSearchInputChange}
             />

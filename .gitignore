@@ -81,3 +81,4 @@ yarn-debug.log*
 yarn-error.log*
 
 molecule-api/.vercel/*
+**/.claude/settings.local.json
